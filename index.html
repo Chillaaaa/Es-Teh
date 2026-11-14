@@ -1,501 +1,447 @@
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mystery Card: Kasus Es Teh di Kantin</title>
-    <style>
-        /* 
-         * PENGATURAN DESAIN & AKSESIBILITAS (WCAG 2.2 AA & LOW VISION)
-         * Mempertahankan karakter visual kontras tinggi dari versi sebelumnya
-         */
-        :root {
-            --bg-color: #ffffff;
-            --text-main: #000000;
-            --text-muted: #1f2937;
-            --primary: #0044cc;
-            --primary-hover: #002b80;
-            --focus-ring: #000000;
-            --focus-bg: #fffbeb;
-            --border-color: #595959;
-            --box-bg: #f8fafc;
-            --transcript-bg: #f1f5f9;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#ffffff">
+  <title>Mystery Card - Kasus Es Teh</title>
 
-        body {
-            font-family: Arial, Helvetica, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            min-height: 100vh;
-            margin: 0;
-            padding: clamp(12px, 3vw, 24px);
-            box-sizing: border-box;
-            line-height: 1.6;
-        }
+  <style>
+    :root {
+      --blue: #0044cc;
+      --blue-dark: #002f91;
+      --green: #166534;
+      --text: #111827;
+      --muted: #374151;
+      --background: #ffffff;
+      --soft: #f1f5f9;
+      --border: #64748b;
+      --focus: #facc15;
+    }
 
-        .card {
-            background-color: var(--bg-color);
-            padding: clamp(20px, 4vw, 40px);
-            border-radius: 12px;
-            width: 100%;
-            max-width: 800px;
-            border: 3px solid var(--border-color);
-            box-sizing: border-box;
-        }
+    * {
+      box-sizing: border-box;
+    }
 
-        header {
-            text-align: center;
-            margin-bottom: clamp(20px, 4vw, 32px);
-            padding-bottom: clamp(16px, 3vw, 24px);
-            border-bottom: 3px solid var(--border-color);
-        }
+    body {
+      margin: 0;
+      padding: 24px 16px;
+      min-height: 100vh;
+      background: var(--background);
+      color: var(--text);
+      font-family: Arial, Helvetica, sans-serif;
+      line-height: 1.6;
+    }
 
-        /* Struktur Heading Berurutan (h1 -> h2 -> h3) */
-        .eyebrow {
-            font-size: clamp(1.1rem, 2vw + 0.5rem, 1.35rem);
-            font-weight: 800;
-            letter-spacing: 1px;
-            color: var(--text-muted);
-            margin: 0 0 8px 0;
-            text-transform: uppercase;
-        }
+    main {
+      width: 100%;
+      max-width: 680px;
+      margin: 0 auto;
+    }
 
-        h1 {
-            font-size: clamp(1.75rem, 4vw + 0.8rem, 2.5rem);
-            font-weight: 800;
-            color: var(--primary);
-            margin: 0;
-            line-height: 1.3;
-        }
+    header {
+      text-align: center;
+      margin-bottom: 28px;
+    }
 
-        h2 {
-            font-size: clamp(1.35rem, 2.5vw + 0.6rem, 1.75rem);
-            font-weight: 800;
-            color: var(--text-main);
-            margin: 0 0 14px 0;
-            line-height: 1.4;
-        }
+    .brand {
+      margin: 0 0 6px;
+      font-size: 1.15rem;
+      font-weight: 800;
+      letter-spacing: 1px;
+      color: var(--muted);
+    }
 
-        section {
-            margin-bottom: clamp(24px, 4vw, 36px);
-        }
+    h1 {
+      margin: 0;
+      color: var(--blue);
+      font-size: clamp(2rem, 6vw, 2.7rem);
+      line-height: 1.2;
+    }
 
-        section:last-child {
-            margin-bottom: 0;
-        }
+    /* Pemutar audio */
 
-        p {
-            font-size: clamp(1.125rem, 1.5vw + 0.6rem, 1.25rem); /* ~18px - 20px+ */
-            margin: 0 0 16px 0;
-            color: var(--text-main);
-        }
+    .player {
+      padding: 28px 20px;
+      border: 2px solid var(--border);
+      border-radius: 18px;
+      background: var(--soft);
+      text-align: center;
+    }
 
-        /* Kotak Status Audio */
-        .status-box {
-            background-color: var(--box-bg);
-            padding: 16px 20px;
-            border-radius: 8px;
-            font-size: clamp(1.125rem, 1.5vw + 0.6rem, 1.25rem);
-            font-weight: 700;
-            text-align: center;
-            margin-bottom: 24px;
-            border: 2px solid var(--border-color);
-        }
-        .status-box.error {
-            background-color: #fef2f2;
-            color: #991b1b;
-            border-color: #991b1b;
-        }
-        .status-box.ready {
-            background-color: #f0fdf4;
-            color: #166534;
-            border-color: #166534;
-        }
+    .status {
+      min-height: 28px;
+      margin: 0 0 18px;
+      font-size: 1rem;
+      font-weight: 700;
+    }
 
-        /* Bagian Pemutar Audio */
-        .audio-wrapper {
-            background-color: var(--box-bg);
-            padding: clamp(16px, 3vw, 24px);
-            border-radius: 12px;
-            border: 2px solid var(--border-color);
-        }
+    .status.playing {
+      color: var(--green);
+    }
 
-        .progress-section {
-            margin-bottom: 24px;
-        }
+    .status.error {
+      color: #991b1b;
+    }
 
-        .time-info {
-            display: flex;
-            justify-content: space-between;
-            font-weight: 700;
-            font-size: clamp(1.1rem, 1.5vw + 0.5rem, 1.25rem);
-            margin-bottom: 12px;
-        }
+    button {
+      min-height: 54px;
+      padding: 12px 22px;
+      border: 2px solid var(--blue);
+      border-radius: 12px;
+      font-family: inherit;
+      font-size: 1.1rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
 
-        input[type="range"] {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 100%;
-            min-height: 44px; /* Memenuhi target sentuh WCAG 2.2 */
-            background: transparent;
-            cursor: pointer;
-            margin: 0;
-        }
-        input[type="range"]::-webkit-slider-runnable-track {
-            width: 100%;
-            height: 16px;
-            background: #cccccc;
-            border-radius: 8px;
-            border: 2px solid var(--text-main);
-        }
-        input[type="range"]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            height: 36px;
-            width: 36px;
-            border-radius: 50%;
-            background: var(--text-main);
-            margin-top: -12px;
-            border: 4px solid var(--bg-color);
-            box-shadow: 0 0 0 2px var(--text-main);
-        }
-        input[type="range"]::-moz-range-track {
-            width: 100%;
-            height: 16px;
-            background: #cccccc;
-            border-radius: 8px;
-            border: 2px solid var(--text-main);
-        }
-        input[type="range"]::-moz-range-thumb {
-            height: 36px;
-            width: 36px;
-            border-radius: 50%;
-            background: var(--text-main);
-            border: 4px solid var(--bg-color);
-            box-shadow: 0 0 0 2px var(--text-main);
-        }
+    button:focus-visible {
+      outline: 5px solid var(--focus);
+      outline-offset: 4px;
+    }
 
-        /* Kontrol Tombol */
-        .controls-main {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 16px;
-            margin-bottom: 24px;
-        }
+    button:disabled {
+      cursor: not-allowed;
+      opacity: 0.65;
+    }
 
-        button {
-            background-color: var(--primary);
-            color: #ffffff;
-            border: 3px solid var(--primary);
-            min-height: 56px; /* Jauh di atas batas minimum 44x44px */
-            min-width: 44px;
-            padding: 14px 24px;
-            font-size: clamp(1.15rem, 2vw + 0.5rem, 1.35rem);
-            font-weight: 800;
-            border-radius: 10px;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            width: 100%;
-            box-sizing: border-box;
-        }
+    .play-button {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 14px;
+      width: 100%;
+      max-width: 340px;
+      min-height: 82px;
+      margin: 0 auto;
+      background: var(--blue);
+      color: #ffffff;
+      font-size: 1.5rem;
+    }
 
-        button:hover:not(:disabled) {
-            background-color: var(--primary-hover);
-            border-color: var(--primary-hover);
-        }
+    .play-button:hover:not(:disabled) {
+      background: var(--blue-dark);
+    }
 
-        button:disabled {
-            background-color: #6b7280;
-            border-color: #6b7280;
-            color: #ffffff;
-            cursor: not-allowed;
-        }
+    .play-button.playing {
+      background: var(--green);
+      border-color: var(--green);
+    }
 
-        .controls-secondary {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-            padding-top: 20px;
-            border-top: 2px solid var(--border-color);
-        }
+    .play-icon {
+      font-size: 1.5rem;
+    }
 
-        .speed-control {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            width: 100%;
-        }
+    .controls {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 18px;
+    }
 
-        .speed-control label {
-            font-size: clamp(1.125rem, 1.5vw + 0.5rem, 1.25rem);
-            font-weight: 800;
-        }
+    .secondary-button {
+      min-width: 130px;
+      background: #ffffff;
+      color: var(--text);
+      border-color: var(--border);
+    }
 
-        select {
-            width: 100%;
-            min-height: 52px;
-            padding: 12px 16px;
-            font-size: clamp(1.125rem, 1.5vw + 0.5rem, 1.25rem);
-            font-weight: 700;
-            color: var(--text-main);
-            border-radius: 8px;
-            border: 3px solid var(--border-color);
-            background-color: #ffffff;
-            cursor: pointer;
-            box-sizing: border-box;
-        }
+    .secondary-button:hover:not(:disabled) {
+      background: #e2e8f0;
+    }
 
-        /* Teks Alternatif Kasus & Instruksi Pembelajaran */
-        .case-text-box {
-            background-color: var(--transcript-bg);
-            padding: clamp(18px, 3vw, 28px);
-            border-radius: 10px;
-            border-left: 8px solid var(--primary);
-            border-top: 2px solid var(--border-color);
-            border-right: 2px solid var(--border-color);
-            border-bottom: 2px solid var(--border-color);
-        }
+    /* Teks kasus */
 
-        .case-text-box p {
-            margin-bottom: 16px;
-        }
+    .case-section {
+      margin-top: 30px;
+    }
 
-        .case-text-box p:last-child {
-            margin-bottom: 0;
-        }
+    h2 {
+      margin: 0 0 12px;
+      font-size: 1.35rem;
+    }
 
-        .question-highlight {
-            font-weight: 700;
-            background-color: #ffffff;
-            padding: 16px;
-            border-radius: 8px;
-            border: 2px solid var(--border-color);
-        }
+    .case-content {
+      padding: 22px;
+      border: 2px solid var(--border);
+      border-left: 7px solid var(--blue);
+      border-radius: 12px;
+      background: #ffffff;
+    }
 
-        /* Indikator Fokus Keyboard yang Tegas */
-        button:focus-visible,
-        input[type="range"]:focus-visible,
-        select:focus-visible {
-            outline: 5px solid var(--focus-ring);
-            outline-offset: 4px;
-            background-color: var(--focus-bg);
-            color: var(--text-main);
-        }
+    .case-content p {
+      margin: 0 0 16px;
+      font-size: 1.15rem;
+      overflow-wrap: anywhere;
+    }
 
-        /* Dukungan Preferensi Reduced Motion */
-        @media (prefers-reduced-motion: reduce) {
-            * {
-                transition: none !important;
-                animation: none !important;
-            }
-        }
+    .case-content p:last-child {
+      margin-bottom: 0;
+    }
 
-        /* Tata Letak Tablet & Desktop */
-        @media (min-width: 640px) {
-            .controls-main {
-                justify-content: flex-start;
-            }
-            .controls-main button {
-                width: auto;
-                min-width: 200px;
-            }
-            .controls-secondary {
-                justify-content: space-between;
-                align-items: center;
-            }
-            .controls-secondary button {
-                width: auto;
-                min-width: 180px;
-            }
-            .speed-control {
-                flex-direction: row;
-                align-items: center;
-                width: auto;
-            }
-            select {
-                width: auto;
-            }
-        }
-    </style>
+    .question {
+      font-weight: 800;
+    }
+
+    /* Instruksi */
+
+    .instruction {
+      margin-top: 24px;
+      padding: 18px;
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      background: var(--soft);
+      text-align: center;
+    }
+
+    .instruction p {
+      margin: 0;
+      font-size: 1.05rem;
+      font-weight: 700;
+    }
+
+    @media (max-width: 480px) {
+      body {
+        padding: 18px 12px;
+      }
+
+      .player {
+        padding: 24px 14px;
+      }
+
+      .controls {
+        flex-direction: column;
+      }
+
+      .secondary-button {
+        width: 100%;
+      }
+
+      .case-content {
+        padding: 18px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        scroll-behavior: auto !important;
+        animation: none !important;
+        transition: none !important;
+      }
+    }
+  </style>
 </head>
+
 <body>
+  <main>
+    <header>
+      <p class="brand">MYSTERY CARD</p>
+      <h1>Kasus Es Teh</h1>
+    </header>
 
-    <main class="card">
-        <header>
-            <p class="eyebrow">Mystery Card &bull; Hukum Permintaan dan Penawaran</p>
-            <h1>Kasus: Es Teh di Kantin</h1>
-        </header>
+    <section class="player" aria-label="Pemutar audio kasus">
+      <p
+        id="audio-status"
+        class="status"
+        role="status"
+        aria-live="polite"
+      >
+        Memuat audio...
+      </p>
 
-        <!-- Bagian Petunjuk Penggunaan -->
-        <section aria-labelledby="heading-petunjuk">
-            <h2 id="heading-petunjuk">Petunjuk Penggunaan</h2>
-            <p>Gunakan tombol <strong>Putar</strong> di bawah ini untuk mendengarkan rekaman audio kasus, atau baca teks kasus yang tersedia di bagian bawah halaman.</p>
-        </section>
+      <audio
+        id="audio-player"
+        src="./Es%20Teh.mp3"
+        preload="metadata"
+      >
+        Browser kamu tidak mendukung pemutar audio.
+      </audio>
 
-        <!-- Bagian Pemutar Audio -->
-        <section aria-labelledby="heading-audio">
-            <h2 id="heading-audio">Audio Kasus</h2>
+      <button
+        type="button"
+        id="play-button"
+        class="play-button"
+        disabled
+      >
+        <span class="play-icon" aria-hidden="true">▶</span>
+        <span id="play-label">Putar Audio</span>
+      </button>
 
-            <div id="status" class="status-box" role="status" aria-live="polite">
-                Memuat file audio...
-            </div>
+      <div class="controls">
+        <button
+          type="button"
+          id="pause-button"
+          class="secondary-button"
+          disabled
+        >
+          ⏸ Jeda
+        </button>
 
-            <!-- Menggunakan file audio persis seperti yang dilampirkan -->
-           <audio id="audio-player" src="Es%20Teh.mp3" preload="metadata"></audio>
+        <button
+          type="button"
+          id="restart-button"
+          class="secondary-button"
+          disabled
+        >
+          ↻ Ulangi
+        </button>
+      </div>
+    </section>
 
-            <div class="audio-wrapper">
-                <div class="progress-section">
-                    <div class="time-info">
-                        <span>Waktu berjalan: <strong id="current-time">00:00</strong></span>
-                        <span>Durasi total: <strong id="duration-time">00:00</strong></span>
-                    </div>
-                    <input type="range" id="progress-bar" value="0" min="0" step="1"
-                           aria-label="Penggeser posisi waktu audio"
-                           aria-valuemin="0" aria-valuemax="0" aria-valuenow="0" aria-valuetext="0 detik">
-                </div>
+    <section class="case-section" aria-labelledby="case-heading">
+      <h2 id="case-heading">Teks Kasus</h2>
 
-                <div class="controls-main">
-                    <button type="button" id="btn-play" disabled>
-                        <span aria-hidden="true">&#9654;</span> Putar Audio
-                    </button>
-                    <button type="button" id="btn-pause" style="display: none;">
-                        <span aria-hidden="true">&#10074;&#10074;</span> Jeda Audio
-                    </button>
-                </div>
+      <div class="case-content">
+        <p>
+          Dengarkan kasus berikut. Analisis secara mandiri
+          tanpa menyampaikan jawaban.
+        </p>
 
-                <div class="controls-secondary">
-                    <button type="button" id="btn-restart" disabled>
-                        <span aria-hidden="true">&#8634;</span> Ulangi dari Awal
-                    </button>
+        <p>
+          Saat jam istirahat, kantin sekolah menjual es teh
+          dengan harga Rp3.000 per gelas. Banyak siswa tertarik
+          membelinya. Namun, ketika harga es teh naik menjadi
+          Rp5.000 per gelas, beberapa siswa memilih mengurangi
+          pembelian karena harganya lebih mahal.
+        </p>
 
-                    <div class="speed-control">
-                        <label for="speed-select">Kecepatan Audio:</label>
-                        <select id="speed-select">
-                            <option value="0.75">0.75x (Lambat)</option>
-                            <option value="1" selected>1x (Normal)</option>
-                            <option value="1.25">1.25x (Agak Cepat)</option>
-                            <option value="1.5">1.5x (Cepat)</option>
-                            <option value="2">2x (Sangat Cepat)</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
-        </section>
+        <p class="question">
+          Berdasarkan kasus tersebut, termasuk hukum apakah
+          peristiwa ekonomi yang terjadi?
+        </p>
+      </div>
+    </section>
 
-        <!-- Bagian Teks Alternatif & Pertanyaan (Persis sesuai isi audio) -->
-        <section aria-labelledby="heading-teks-kasus">
-            <h2 id="heading-teks-kasus">Teks Kasus dan Pertanyaan</h2>
-            <div class="case-text-box">
-                <p>Dengarkan kasus berikut. Analisis secara mandiri tanpa menyampaikan jawaban.</p>
-                <p>Saat jam istirahat, kantin sekolah menjual es teh dengan harga Rp3.000 per gelas. Banyak siswa tertarik membelinya. Namun, ketika harga es teh naik menjadi Rp5.000 per gelas, beberapa siswa memilih mengurangi pembelian karena harganya lebih mahal.</p>
-                <p class="question-highlight">Berdasarkan kasus tersebut, termasuk hukum apakah peristiwa ekonomi yang terjadi?</p>
-                <p>Tunggu aba-aba guru. Setelah hitungan ketiga, angkat <strong>tangan kanan untuk permintaan</strong> atau <strong>tangan kiri untuk penawaran</strong>.</p>
-            </div>
-        </section>
-    </main>
+    <section class="instruction" aria-label="Instruksi menjawab">
+      <p>
+        Tunggu aba-aba guru. Angkat tangan kanan untuk
+        permintaan atau tangan kiri untuk penawaran.
+      </p>
+    </section>
+  </main>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const audio = document.getElementById('audio-player');
-            const playBtn = document.getElementById('btn-play');
-            const pauseBtn = document.getElementById('btn-pause');
-            const restartBtn = document.getElementById('btn-restart');
-            const progressBar = document.getElementById('progress-bar');
-            const currentTimeEl = document.getElementById('current-time');
-            const durationTimeEl = document.getElementById('duration-time');
-            const speedSelect = document.getElementById('speed-select');
-            const statusBox = document.getElementById('status');
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const audio = document.getElementById("audio-player");
+      const playButton = document.getElementById("play-button");
+      const pauseButton = document.getElementById("pause-button");
+      const restartButton = document.getElementById("restart-button");
+      const playLabel = document.getElementById("play-label");
+      const status = document.getElementById("audio-status");
 
-            function formatTime(seconds) {
-                if (isNaN(seconds)) return "00:00";
-                const m = Math.floor(seconds / 60);
-                const s = Math.floor(seconds % 60);
-                return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
-            }
+      let audioReady = false;
 
-            audio.addEventListener('loadedmetadata', () => {
-                const totalSeconds = Math.floor(audio.duration);
-                durationTimeEl.textContent = formatTime(audio.duration);
-                progressBar.max = totalSeconds;
-                progressBar.setAttribute('aria-valuemax', totalSeconds);
+      function setStatus(message, type = "") {
+        status.textContent = message;
+        status.className = "status" + (type ? " " + type : "");
+      }
 
-                statusBox.textContent = "Audio siap diputar. Tekan tombol Putar Audio.";
-                statusBox.className = "status-box ready";
+      function setPlayingState() {
+        playButton.classList.add("playing");
+        playLabel.textContent = "Sedang Diputar";
+        playButton.disabled = true;
+        pauseButton.disabled = false;
+        restartButton.disabled = false;
+        setStatus("Audio sedang diputar.", "playing");
+      }
 
-                playBtn.disabled = false;
-                restartBtn.disabled = false;
-            });
+      function setPausedState() {
+        playButton.classList.remove("playing");
+        playLabel.textContent = "Lanjutkan";
+        playButton.disabled = !audioReady;
+        pauseButton.disabled = true;
+        restartButton.disabled = !audioReady;
+        setStatus("Audio dijeda.");
+      }
 
-            audio.addEventListener('error', () => {
-                statusBox.textContent = "Gagal memuat audio. Pastikan file Es Teh.mp3 tersedia di repository.";
-                statusBox.className = "status-box error";
-            });
+      function setReadyState() {
+        audioReady = true;
+        playButton.disabled = false;
+        pauseButton.disabled = true;
+        restartButton.disabled = false;
+        playButton.classList.remove("playing");
+        playLabel.textContent = "Putar Audio";
+        setStatus("Siap diputar.");
+      }
 
-            audio.addEventListener('timeupdate', () => {
-                const current = Math.floor(audio.currentTime);
-                const total = Math.floor(audio.duration) || 0;
-                currentTimeEl.textContent = formatTime(current);
-                progressBar.value = current;
+      audio.addEventListener("canplay", () => {
+        setReadyState();
+      });
 
-                progressBar.setAttribute('aria-valuenow', current);
-                progressBar.setAttribute('aria-valuetext', `${current} detik dari ${total} detik`);
-            });
+      audio.addEventListener("error", () => {
+        audioReady = false;
+        playButton.disabled = false;
+        pauseButton.disabled = true;
+        restartButton.disabled = true;
+        playButton.classList.remove("playing");
+        playLabel.textContent = "Coba Lagi";
+        setStatus(
+          "Audio gagal dimuat. Periksa file audio atau coba muat ulang halaman.",
+          "error"
+        );
+      });
 
-            audio.addEventListener('ended', () => {
-                playBtn.style.display = "inline-flex";
-                pauseBtn.style.display = "none";
-                audio.currentTime = 0;
-                playBtn.focus();
-                statusBox.textContent = "Pemutaran audio selesai.";
-            });
+      audio.addEventListener("playing", () => {
+        setPlayingState();
+      });
 
-            playBtn.addEventListener('click', () => {
-                audio.play().then(() => {
-                    playBtn.style.display = "none";
-                    pauseBtn.style.display = "inline-flex";
-                    pauseBtn.focus();
-                    statusBox.textContent = "Audio sedang diputar.";
-                }).catch(() => {
-                    statusBox.textContent = "Pemutaran audio terhambat oleh browser. Silakan tekan tombol Putar kembali.";
-                    statusBox.className = "status-box error";
-                });
-            });
+      audio.addEventListener("pause", () => {
+        if (!audio.ended && audioReady) {
+          setPausedState();
+        }
+      });
 
-            pauseBtn.addEventListener('click', () => {
-                audio.pause();
-                pauseBtn.style.display = "none";
-                playBtn.style.display = "inline-flex";
-                playBtn.focus();
-                statusBox.textContent = "Audio dijeda. Tekan Putar Audio untuk melanjutkan.";
-            });
+      audio.addEventListener("ended", () => {
+        playButton.classList.remove("playing");
+        playButton.disabled = false;
+        pauseButton.disabled = true;
+        restartButton.disabled = false;
+        playLabel.textContent = "Putar Lagi";
+        audio.currentTime = 0;
+        setStatus("Audio selesai diputar.");
+      });
 
-            restartBtn.addEventListener('click', () => {
-                audio.currentTime = 0;
-                if (audio.paused) {
-                    audio.play().then(() => {
-                        playBtn.style.display = "none";
-                        pauseBtn.style.display = "inline-flex";
-                        pauseBtn.focus();
-                    }).catch(() => {});
-                }
-                statusBox.textContent = "Audio diputar ulang dari awal.";
-            });
+      async function playAudio(fromStart = false) {
+        if (fromStart) {
+          audio.currentTime = 0;
+        }
 
-            progressBar.addEventListener('input', () => {
-                audio.currentTime = progressBar.value;
-            });
+        try {
+          await audio.play();
+        } catch (error) {
+          setStatus(
+            "Audio tidak dapat diputar. Silakan coba kembali.",
+            "error"
+          );
+          playButton.disabled = false;
+          playLabel.textContent = "Coba Lagi";
+        }
+      }
 
-            speedSelect.addEventListener('change', (e) => {
-                audio.playbackRate = parseFloat(e.target.value);
-                const selectedText = e.target.options[e.target.selectedIndex].text;
-                statusBox.textContent = `Kecepatan audio diatur ke ${selectedText}.`;
-            });
-        });
-    </script>
+      playButton.addEventListener("click", () => {
+        if (audio.error) {
+          audio.load();
+          setStatus("Mencoba memuat audio kembali.");
+          return;
+        }
+
+        playAudio();
+      });
+
+      pauseButton.addEventListener("click", () => {
+        audio.pause();
+      });
+
+      restartButton.addEventListener("click", () => {
+        playAudio(true);
+      });
+
+      audio.load();
+    });
+  </script>
 </body>
 </html>
