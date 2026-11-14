@@ -59,7 +59,7 @@
       line-height: 1.2;
     }
 
-    /* Pemutar audio */
+    /* PEMUTAR AUDIO */
 
     .player {
       padding: 28px 20px;
@@ -84,18 +84,23 @@
       color: #991b1b;
     }
 
+    button,
+    select {
+      font-family: inherit;
+      cursor: pointer;
+    }
+
     button {
       min-height: 54px;
       padding: 12px 22px;
       border: 2px solid var(--blue);
       border-radius: 12px;
-      font-family: inherit;
       font-size: 1.1rem;
       font-weight: 700;
-      cursor: pointer;
     }
 
-    button:focus-visible {
+    button:focus-visible,
+    select:focus-visible {
       outline: 5px solid var(--focus);
       outline-offset: 4px;
     }
@@ -151,7 +156,36 @@
       background: #e2e8f0;
     }
 
-    /* Teks kasus */
+    /* PENGATURAN KECEPATAN */
+
+    .speed-control {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      margin-top: 22px;
+      width: 100%;
+    }
+
+    .speed-control label {
+      font-size: 1.05rem;
+      font-weight: 700;
+    }
+
+    .speed-control select {
+      width: 100%;
+      max-width: 340px;
+      min-height: 54px;
+      padding: 10px 14px;
+      border: 2px solid var(--border);
+      border-radius: 10px;
+      background: #ffffff;
+      color: var(--text);
+      font-size: 1.05rem;
+      font-weight: 700;
+    }
+
+    /* TEKS KASUS */
 
     .case-section {
       margin-top: 30px;
@@ -184,7 +218,7 @@
       font-weight: 800;
     }
 
-    /* Instruksi */
+    /* INSTRUKSI */
 
     .instruction {
       margin-top: 24px;
@@ -200,6 +234,8 @@
       font-size: 1.05rem;
       font-weight: 700;
     }
+
+    /* TAMPILAN HP */
 
     @media (max-width: 480px) {
       body {
@@ -223,6 +259,8 @@
       }
     }
 
+    /* MENGURANGI ANIMASI */
+
     @media (prefers-reduced-motion: reduce) {
       *,
       *::before,
@@ -242,7 +280,9 @@
       <h1>Kasus Es Teh</h1>
     </header>
 
+    <!-- PEMUTAR AUDIO -->
     <section class="player" aria-label="Pemutar audio kasus">
+
       <p
         id="audio-status"
         class="status"
@@ -289,9 +329,27 @@
           ↻ Ulangi
         </button>
       </div>
+
+      <!-- KECEPATAN AUDIO -->
+      <div class="speed-control">
+        <label for="speed-select">Kecepatan Audio</label>
+
+        <select id="speed-select" disabled>
+          <option value="0.5">0,5x - Sangat Lambat</option>
+          <option value="0.75">0,75x - Lambat</option>
+          <option value="1" selected>1x - Normal</option>
+          <option value="1.25">1,25x - Cepat</option>
+          <option value="1.5">1,5x - Lebih Cepat</option>
+        </select>
+      </div>
+
     </section>
 
-    <section class="case-section" aria-labelledby="case-heading">
+    <!-- TEKS KASUS -->
+    <section
+      class="case-section"
+      aria-labelledby="case-heading"
+    >
       <h2 id="case-heading">Teks Kasus</h2>
 
       <div class="case-content">
@@ -315,12 +373,17 @@
       </div>
     </section>
 
-    <section class="instruction" aria-label="Instruksi menjawab">
+    <!-- INSTRUKSI MENJAWAB -->
+    <section
+      class="instruction"
+      aria-label="Instruksi menjawab"
+    >
       <p>
         Tunggu aba-aba guru. Angkat tangan kanan untuk
         permintaan atau tangan kiri untuk penawaran.
       </p>
     </section>
+
   </main>
 
   <script>
@@ -330,6 +393,7 @@
       const pauseButton = document.getElementById("pause-button");
       const restartButton = document.getElementById("restart-button");
       const playLabel = document.getElementById("play-label");
+      const speedSelect = document.getElementById("speed-select");
       const status = document.getElementById("audio-status");
 
       let audioReady = false;
@@ -339,32 +403,54 @@
         status.className = "status" + (type ? " " + type : "");
       }
 
+      function setReadyState() {
+        audioReady = true;
+
+        playButton.disabled = false;
+        pauseButton.disabled = true;
+        restartButton.disabled = false;
+        speedSelect.disabled = false;
+
+        playButton.classList.remove("playing");
+        playLabel.textContent = "Putar Audio";
+
+        setStatus("Siap diputar.");
+      }
+
       function setPlayingState() {
         playButton.classList.add("playing");
-        playLabel.textContent = "Sedang Diputar";
         playButton.disabled = true;
         pauseButton.disabled = false;
         restartButton.disabled = false;
+
+        playLabel.textContent = "Sedang Diputar";
+
         setStatus("Audio sedang diputar.", "playing");
       }
 
       function setPausedState() {
         playButton.classList.remove("playing");
-        playLabel.textContent = "Lanjutkan";
-        playButton.disabled = !audioReady;
-        pauseButton.disabled = true;
-        restartButton.disabled = !audioReady;
-        setStatus("Audio dijeda.");
-      }
-
-      function setReadyState() {
-        audioReady = true;
         playButton.disabled = false;
         pauseButton.disabled = true;
         restartButton.disabled = false;
+
+        playLabel.textContent = "Lanjutkan";
+
+        setStatus("Audio dijeda.");
+      }
+
+      function setErrorState(message) {
+        audioReady = false;
+
+        playButton.disabled = false;
+        pauseButton.disabled = true;
+        restartButton.disabled = true;
+        speedSelect.disabled = true;
+
         playButton.classList.remove("playing");
-        playLabel.textContent = "Putar Audio";
-        setStatus("Siap diputar.");
+        playLabel.textContent = "Coba Lagi";
+
+        setStatus(message, "error");
       }
 
       audio.addEventListener("canplay", () => {
@@ -372,15 +458,8 @@
       });
 
       audio.addEventListener("error", () => {
-        audioReady = false;
-        playButton.disabled = false;
-        pauseButton.disabled = true;
-        restartButton.disabled = true;
-        playButton.classList.remove("playing");
-        playLabel.textContent = "Coba Lagi";
-        setStatus(
-          "Audio gagal dimuat. Periksa file audio atau coba muat ulang halaman.",
-          "error"
+        setErrorState(
+          "Audio gagal dimuat. Periksa file audio atau coba muat ulang halaman."
         );
       });
 
@@ -399,8 +478,9 @@
         playButton.disabled = false;
         pauseButton.disabled = true;
         restartButton.disabled = false;
+
         playLabel.textContent = "Putar Lagi";
-        audio.currentTime = 0;
+
         setStatus("Audio selesai diputar.");
       });
 
@@ -416,6 +496,7 @@
             "Audio tidak dapat diputar. Silakan coba kembali.",
             "error"
           );
+
           playButton.disabled = false;
           playLabel.textContent = "Coba Lagi";
         }
@@ -437,6 +518,10 @@
 
       restartButton.addEventListener("click", () => {
         playAudio(true);
+      });
+
+      speedSelect.addEventListener("change", () => {
+        audio.playbackRate = Number(speedSelect.value);
       });
 
       audio.load();
